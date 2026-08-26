@@ -15,11 +15,16 @@ def limpiar_sicoin(file):
         raise ValueError("El archivo no tiene la estructura de columnas de SICOIN esperada (al menos 55 columnas).")
 
     current_prog, current_subp, current_proy, current_act = "", "", "", ""
+    periodo_reporte = "Desconocido"
     flat_data = []
 
     for index, row in df.iterrows():
-        # Saltamos el encabezado institucional y descriptivo de SICOIN
-        if index < 20: 
+        # Extraer el periodo del reporte que suele estar cerca de la fila 11
+        if index < 20:
+            if pd.notna(row.get(28)) and isinstance(row.get(28), str) and "Periodo del:" in row.get(28):
+                val_del = str(row.get(28)).strip()
+                val_al = str(row.get(42)).strip() if pd.notna(row.get(42)) else ""
+                periodo_reporte = f"{val_del} {val_al}".strip()
             continue
             
         if pd.notna(row[0]) and pd.notna(row[5]) and pd.isna(row[1]):
@@ -34,6 +39,7 @@ def limpiar_sicoin(file):
             if isinstance(row[5], str) and re.match(r'\d{2}-\d{4}-\d{4}', str(row[5])):
                 renglon = int(row[1]) if isinstance(row[1], float) else row[1]
                 flat_data.append({
+                    'Periodo_Reporte': periodo_reporte,
                     'Programa': current_prog, 
                     'Subprograma': current_subp,
                     'Proyecto': current_proy, 
