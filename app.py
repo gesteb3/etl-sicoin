@@ -39,4 +39,4 @@ if archivo_subido is not None:
             )
 
     except Exception as e:
-        st.error(f"Error al procesar el archivo. Asegúrate de que sea el formato correcto de SICOIN. Detalle técnico: {e}")
+        st.error(f"Error al procesar el archivo: Asegúrate de que sea el formato correcto de SICOIN. Detalle técnico: {e}")
